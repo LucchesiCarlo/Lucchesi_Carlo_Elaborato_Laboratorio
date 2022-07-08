@@ -56,6 +56,12 @@ void BitmapImage::setPixel(int row, int column, int channel, int value) {
     channel--;
     //Decrementing row, column and channel is necessary due to the (1,1) pixel of the channel 1 is the top left pixel
     // of the first channel
+    if (value < 0) {
+        value = 0;
+    } else if (value > 255) {
+        value = 255;
+    }
+
     buffer[channel * width * height + row * width + column] = value;
 }
 
