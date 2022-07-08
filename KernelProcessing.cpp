@@ -48,9 +48,10 @@ int KernelProcessing::calculateValue(const BitmapImage &image, int row, int colu
             //I suppose to use the extend Hedge technique to handle external pixels
             //Reference: https://en.wikipedia.org/wiki/Kernel_(image_processing)#Edge_Handling
             extendHedge(image, i, j);
+            //TODO finish the method.
         }
     }
-    result =
+    return result;
 }
 
 
