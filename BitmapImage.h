@@ -22,11 +22,12 @@ public:
         copyImage(image);
     }
 
-    const BitmapImage &operator=(const BitmapImage &rhs) {
+    BitmapImage &operator=(const BitmapImage &rhs) {
         if (this != &rhs) {
             delete[] buffer;
             copyImage(rhs);
         }
+        return *this;
     }
 
     int getWidth() const {
@@ -45,7 +46,8 @@ public:
         return type;
     }
 
-    int getPixel(int row, int column, int channel) const;
+    //Due to the fact that this method could be called many times it's fair to define it inline.
+    inline int getPixel(int row, int column, int channel) const;
 
     void setPixel(int row, int column, int channel, int value);
 

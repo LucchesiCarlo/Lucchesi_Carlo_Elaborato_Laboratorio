@@ -17,6 +17,8 @@ public:
 
     BitmapImage processImage(const BitmapImage &image) const;
 
+    void setMaskElement(int row, int column, float value);
+
 private:
     int dimension;
     float *mask;

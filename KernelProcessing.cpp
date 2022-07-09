@@ -36,6 +36,17 @@ BitmapImage KernelProcessing::processImage(const BitmapImage &image) const {
     }
 }
 
+void KernelProcessing::setMaskElement(int row, int column, float value) {
+    if (row < 1 || row > dimension || column < 1 || column > dimension) {
+        throw std::invalid_argument("Error: given position is not valid.");
+    }
+
+    //The intent is to consider in the external interface that the top left element is in the row and column 1.
+    row--;
+    column--;
+    mask[row * dimension + column];
+}
+
 int KernelProcessing::calculateValue(const BitmapImage &image, int row, int column, int channel) const {
     float result = 0;
     int offset = 1;
@@ -48,7 +59,14 @@ int KernelProcessing::calculateValue(const BitmapImage &image, int row, int colu
             //I suppose to use the extend Hedge technique to handle external pixels
             //Reference: https://en.wikipedia.org/wiki/Kernel_(image_processing)#Edge_Handling
             extendHedge(image, i, j);
-            //TODO finish the method.
+
+            //XXX According to the Wikipedia page the element of the mask is the opposite position to the relative pixel
+            //in the image.
+            int maskRow = row + offset * 2 - i;
+            int maskColumn = column + offset * 2 - j;
+            result += image.getPixel(i, j, channel) * mask[maskRow * dimension + maskColumn];
+            //FIXME Maybe it's possible to do with arrays. Valuate to introduce into the BitmapImage the possibility to
+            // get a given square of the image linearized into an array.
         }
     }
     return result;
