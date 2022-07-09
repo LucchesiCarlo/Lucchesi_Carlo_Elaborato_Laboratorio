@@ -71,5 +71,17 @@ private:
     bool itsValidPosition(int row, int column, int channel) const;
 };
 
+//The definition should be here to avoid compiling errors.
+inline int BitmapImage::getPixel(int row, int column, int channel) const {
+    if (!itsValidPosition(row, column, channel)) {
+        throw std::invalid_argument("Error: the given position to pick a pixel is wrong.");
+    }
+    row--;
+    column--;
+    channel--;
+    //Decrementing row, column and channel is necessary due to the (1,1) pixel of the channel 1 is the top left pixel
+    // of the first channel
+    return buffer[channel * width * height + row * width + column];
+}
 
 #endif //LUCCHESI_CARLO_ELABORATO_LABORATORIO_BITMAPIMAGE_H
