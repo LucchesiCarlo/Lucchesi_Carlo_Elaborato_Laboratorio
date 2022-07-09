@@ -2,6 +2,7 @@
 // Created by carlo on 08/07/22.
 //
 
+#include <cstring>
 #include <stdexcept>
 #include "KernelProcessing.h"
 
@@ -16,16 +17,29 @@ KernelProcessing::KernelProcessing(KernelDimension type) {
     for (int i = 0; i < totalNumbers; i++) {
         mask[i] = 0;
     }
-    mask[dimension / 2 * dimension + dimension / 2] = 0;
+    mask[dimension / 2 * dimension + dimension / 2] = 1;
 }
 
-KernelProcessing &KernelProcessing::operator=(const KernelProcessing &kernel) {
-    if (this != &kernel) {
+KernelProcessing &KernelProcessing::operator=(const KernelProcessing &rhs) {
+    if (this != &rhs) {
         delete[] mask;
-        copyValues(kernel);
+        copyValues(rhs);
     }
+    return *this;
 }
 
+bool KernelProcessing::operator==(const KernelProcessing &rhs) const {
+    if (this == &rhs) {
+        return true;
+    }
+    if (dimension == rhs.dimension) {
+        //Since memcmp returns 0 if the 2 chunks are equal there is ! on top
+        if (!std::memcmp(mask, rhs.mask, dimension * dimension)) {
+            return true;
+        }
+    }
+    return false;
+}
 
 BitmapImage KernelProcessing::processImage(const BitmapImage &image) const {
     int width = image.getWidth();
@@ -67,7 +81,9 @@ int KernelProcessing::getMaskElement(int row, int column) const {
 }
 
 void KernelProcessing::copyValues(const KernelProcessing &kernel) {
-
+    dimension = kernel.dimension;
+    mask = new float[dimension * dimension];
+    std::memcpy(mask, kernel.mask, dimension * dimension);
 }
 
 int KernelProcessing::calculateValue(const BitmapImage &image, int row, int column, int channel) const {
@@ -112,7 +128,7 @@ void KernelProcessing::extendHedge(const BitmapImage &image, int &row, int &colu
 
 bool KernelProcessing::itsValidPosition(int row, int column) const {
     if (row < 1 || row > dimension || column < 1 || column > dimension) {
-        return true;
+        return false;
     }
-    return false;
+    return true;
 }

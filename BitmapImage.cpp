@@ -26,7 +26,10 @@ BitmapImage::BitmapImage(int width, int height, ImageType type) : width(width), 
 }
 
 bool BitmapImage::operator==(const BitmapImage &rhs) const {
-    if (this == &rhs || (width == rhs.width && height == rhs.height && channels == rhs.channels && type == rhs.type)) {
+    if (this == &rhs) {
+        return true;
+    }
+    if (width == rhs.width && height == rhs.height && channels == rhs.channels && type == rhs.type) {
         //Since memcmp returns 0 if the 2 chunks are equal there is ! on top
         if (!std::memcmp(buffer, rhs.buffer, width * height * channels)) {
             return true;

@@ -8,13 +8,15 @@
 class BitmapImageSuite : public ::testing::Test {
 
 protected:
+    BitmapImageSuite() : image1{3, 2, Gray}, image2{3, 2, RGB}, image3{image2} {};
+
     void SetUp() override {
         image1.setPixel(2, 3, 1, 10);
     }
 
-    BitmapImage image1{3, 2, Gray};
-    BitmapImage image2{3, 2, RGB};
-    BitmapImage image3{image2};
+    BitmapImage image1;
+    BitmapImage image2;
+    BitmapImage image3;
 };
 
 TEST_F(BitmapImageSuite, TestEqualOperator) {

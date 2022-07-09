@@ -19,7 +19,9 @@ public:
         copyValues(kernel);
     }
 
-    KernelProcessing &operator=(const KernelProcessing &kernel);
+    KernelProcessing &operator=(const KernelProcessing &rhs);
+
+    bool operator==(const KernelProcessing &rhs) const;
 
     BitmapImage processImage(const BitmapImage &image) const;
 
