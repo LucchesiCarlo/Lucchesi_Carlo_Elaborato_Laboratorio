@@ -19,6 +19,14 @@ KernelProcessing::KernelProcessing(KernelDimension type) {
     mask[dimension / 2 * dimension + dimension / 2] = 0;
 }
 
+KernelProcessing &KernelProcessing::operator=(const KernelProcessing &kernel) {
+    if (this != &kernel) {
+        delete[] mask;
+        copyValues(kernel);
+    }
+}
+
+
 BitmapImage KernelProcessing::processImage(const BitmapImage &image) const {
     int width = image.getWidth();
     int height = image.getHeight();
@@ -37,14 +45,29 @@ BitmapImage KernelProcessing::processImage(const BitmapImage &image) const {
 }
 
 void KernelProcessing::setMaskElement(int row, int column, float value) {
-    if (row < 1 || row > dimension || column < 1 || column > dimension) {
+    if (!itsValidPosition(row, column)) {
         throw std::invalid_argument("Error: given position is not valid.");
     }
 
     //The intent is to consider in the external interface that the top left element is in the row and column 1.
     row--;
     column--;
-    mask[row * dimension + column];
+    mask[row * dimension + column] = value;
+}
+
+int KernelProcessing::getMaskElement(int row, int column) const {
+    if (!itsValidPosition(row, column)) {
+        throw std::invalid_argument("Error: given position is not valid.");
+    }
+
+    //The intent is to consider in the external interface that the top left element is in the row and column 1.
+    row--;
+    column--;
+    return mask[row * dimension + column];
+}
+
+void KernelProcessing::copyValues(const KernelProcessing &kernel) {
+
 }
 
 int KernelProcessing::calculateValue(const BitmapImage &image, int row, int column, int channel) const {
@@ -84,4 +107,12 @@ void KernelProcessing::extendHedge(const BitmapImage &image, int &row, int &colu
     } else if (column > image.getWidth()) {
         column = image.getWidth();
     }
+}
+
+
+bool KernelProcessing::itsValidPosition(int row, int column) const {
+    if (row < 1 || row > dimension || column < 1 || column > dimension) {
+        return true;
+    }
+    return false;
 }

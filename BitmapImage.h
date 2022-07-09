@@ -18,7 +18,7 @@ class BitmapImage {
 public:
     BitmapImage(int width, int height, ImageType type);
 
-    BitmapImage(const BitmapImage &image) {
+    explicit BitmapImage(const BitmapImage &image) {
         copyImage(image);
     }
 
