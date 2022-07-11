@@ -22,19 +22,6 @@ protected:
 
 TEST_F(ActualKernelProcessing, TestApplyKernelProcessing) {
     BitmapImage result = kernel.processImage(image);
-    for (int i = 0; i < 3; i++) {
-        for (int j = 0; j < 3; j++) {
-            std::cout << kernel.getMaskElement(i + 1, j + 1) << "-";
-        }
-        std::cout << std::endl;
-    }
-    std::cout << image.getPixel(1, 1, 1) * kernel.getMaskElement(3, 3) << std::endl;
-    std::cout << image.getPixel(1, 1, 1) * kernel.getMaskElement(2, 2) << std::endl;
-    std::cout << image.getPixel(1, 1, 1) * kernel.getMaskElement(1, 1) << std::endl;
-    for (int i = 0; i < 6; i++) {
-        std::cout << image.getPixel(i / 3 + 1, i % 3 + 1, 1) << "-";
-        std::cout << result.getPixel(i / 3 + 1, i % 3 + 1, 1) << "-";
-        std::cout << expectedResult.getPixel(i / 3 + 1, i % 3 + 1, 1) << std::endl;
-    }
+
     ASSERT_EQ(result, expectedResult) << "Kernel processing doesn't perform as expected.";
 }
