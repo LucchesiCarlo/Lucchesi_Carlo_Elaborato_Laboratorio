@@ -1,7 +1,7 @@
 //
 // Created by carlo on 08/07/22.
 //
-
+#include <algorithm>
 #include "BitmapImage.h"
 
 BitmapImage::BitmapImage(int width, int height, ImageType type) : width(width), height(height), type(type) {
@@ -23,6 +23,7 @@ BitmapImage::BitmapImage(int width, int height, ImageType type) : width(width), 
             break;
     }
     buffer = new int[width * height * channels];
+    std::fill(buffer, buffer + width * height * channels, 0);
 }
 
 bool BitmapImage::operator==(const BitmapImage &rhs) const {

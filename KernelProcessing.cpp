@@ -4,6 +4,7 @@
 
 #include <cstring>
 #include <stdexcept>
+#include <algorithm>
 #include "KernelProcessing.h"
 
 KernelProcessing::KernelProcessing(KernelDimension type) {
@@ -14,9 +15,8 @@ KernelProcessing::KernelProcessing(KernelDimension type) {
     }
     int totalNumbers = dimension * dimension;
     mask = new float[totalNumbers];
-    for (int i = 0; i < totalNumbers; i++) {
-        mask[i] = 0;
-    }
+
+    std::fill(mask, mask + totalNumbers, 0);
     mask[dimension / 2 * dimension + dimension / 2] = 1;
 }
 
@@ -56,6 +56,7 @@ BitmapImage KernelProcessing::processImage(const BitmapImage &image) const {
             }
         }
     }
+    return result;
 }
 
 void KernelProcessing::setMaskElement(int row, int column, float value) {
@@ -95,31 +96,35 @@ int KernelProcessing::calculateValue(const BitmapImage &image, int row, int colu
 
     for (int i = row - offset; i <= row + offset; i++) {
         for (int j = column - offset; j <= column + offset; j++) {
-            //I suppose to use the extend Hedge technique to handle external pixels
-            //Reference: https://en.wikipedia.org/wiki/Kernel_(image_processing)#Edge_Handling
-            extendHedge(image, i, j);
-
             //XXX According to the Wikipedia page the element of the mask is the opposite position to the relative pixel
             //in the image.
-            int maskRow = row + offset * 2 - i;
-            int maskColumn = column + offset * 2 - j;
-            result += image.getPixel(i, j, channel) * mask[maskRow * dimension + maskColumn];
+            int imageRow = i;
+            int imageColumn = j;
+            int maskRow = row + offset * 2 - i - 1;
+            int maskColumn = column + offset * 2 - j - 1;
+            //he minus 1 are essential due to the fact that externally the first element is at index (1,1)
+
+            //I suppose to use the Extend Hedge technique to handle external pixels
+            //Reference: https://en.wikipedia.org/wiki/Kernel_(image_processing)#Edge_Handling
+            extendHedge(image, imageRow, imageColumn);
+
+            result += image.getPixel(imageRow, imageColumn, channel) * mask[maskRow * dimension + maskColumn];
             //FIXME Maybe it's possible to do with arrays. Valuate to introduce into the BitmapImage the possibility to
             // get a given square of the image linearized into an array.
         }
     }
-    return result;
+    return static_cast<int> (result);
 }
 
 
 void KernelProcessing::extendHedge(const BitmapImage &image, int &row, int &column) const {
-    if (row < 0) {
-        row = 0;
+    if (row < 1) {
+        row = 1;
     } else if (row > image.getHeight()) {
         row = image.getHeight();
     }
-    if (column < 0) {
-        column = 0;
+    if (column < 1) {
+        column = 1;
     } else if (column > image.getWidth()) {
         column = image.getWidth();
     }

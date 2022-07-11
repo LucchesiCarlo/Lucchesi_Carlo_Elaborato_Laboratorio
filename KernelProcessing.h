@@ -15,7 +15,7 @@ class KernelProcessing {
 public:
     explicit KernelProcessing(KernelDimension type);
 
-    explicit KernelProcessing(const KernelProcessing &kernel) {
+    KernelProcessing(const KernelProcessing &kernel) {
         copyValues(kernel);
     }
 

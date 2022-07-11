@@ -43,3 +43,11 @@ TEST(KernelProcessingTests, TestWrongData) {
     EXPECT_NO_THROW(five.getMaskElement(1, 3));
     EXPECT_NO_THROW(five.setMaskElement(3, 2, 10));
 }
+
+TEST(KernelProcessingTests, TestIdentityMask) {
+    KernelProcessing identity(Three);
+    BitmapImage image(3, 2, RGB);
+
+    BitmapImage result = identity.processImage(image);
+    ASSERT_EQ(result, image) << "Identity Kernel Processing doesn't perform correctly.";
+}
