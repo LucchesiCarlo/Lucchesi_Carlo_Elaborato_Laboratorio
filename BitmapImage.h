@@ -9,7 +9,7 @@
 #include <cstring>
 
 //Honestly, I haven't found serious way to implement this class using templates.
-//FIXME Ask to the professor if it is correct, even if it's not a template class.
+//FIXME Ask the professor if it is correct, even if it's not a template class.
 enum ImageType {
     Gray, GrayAlpha, RGB, RGBAlpha
 };

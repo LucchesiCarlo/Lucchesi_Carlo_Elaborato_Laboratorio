@@ -5,76 +5,100 @@
 #include <memory>
 #include "NetpbmLoader.h"
 
-BitmapImage NetpbmLoader::loadImage(const std::string &url) const {
-    std::ifstream imageFile(url);
-    if (imageFile.is_open()) {
+BitmapImage NetpbmLoader::loadImage(const std::string &url) {
+    std::ifstream readType(url);
+    if (readType.is_open()) {
         //It's actually called Magic Number in the wikipedia page https://en.wikipedia.org/wiki/Netpbm#Description
-        std::unique_ptr<char> magicNumber(new char[3]);
-        imageFile.getline(magicNumber.get(), 3);
-        if (!std::strcmp(magicNumber.get(), "P2")) {
+        std::string magicNumber;
+        readType >> magicNumber;
+        readType.close();
+
+        std::ifstream imageFile;
+        //The Morgan's Law : not a or not b = not (a and b)
+        if (!(magicNumber.compare("P5") && magicNumber.compare("P6"))) {
+            currentIsPlain = false;
+            imageFile = std::ifstream(url, std::ifstream::binary);
+        } else {
+            currentIsPlain = true;
+            imageFile = std::ifstream(url);
+        }
+        imageFile.ignore(3);
+        if (!(magicNumber.compare("P2") && magicNumber.compare("P5"))) {
+            currentChannels = 1;
             return generatePGM(imageFile);
-        } else if (!std::strcmp(magicNumber.get(), "P3")) {
+        } else if (!(magicNumber.compare("P3") && magicNumber.compare("P6"))) {
+            currentChannels = 3;
             return generatePPM(imageFile);
-        } else if (!std::strcmp(magicNumber.get(), "P7")) {
+        } else if (!magicNumber.compare("P7")) {
             return generatePAM(imageFile);
         } else {
             throw std::invalid_argument("Error: the file has an unknown format.");
         }
-        //TODO Read from the file and create the image.
     } else {
         throw std::invalid_argument("Error: it's impossible to open the file given as the url.");
     }
 }
 
-BitmapImage NetpbmLoader::generatePGM(std::ifstream &file) const {
-    int width = 1;
-    int height = 1;
-    int maxValue = 255;
-    readMetaDataOld(width, height, maxValue, file);
-    BitmapImage image(width, height, Gray);
-    std::string pixelData;
-    for (int i = 1; i <= height; i++) {
-        for (int j = 1; j <= width; j++) {
-            file >> pixelData;
-            int pixelValue = std::stoi(pixelData);
-            image.setPixel(i, j, 1, 255 / maxValue * pixelValue);
-        }
+BitmapImage NetpbmLoader::generatePGM(std::ifstream &file) {
+    readMetaDataOld(file);
+    BitmapImage image(currentWidth, currentHeight, Gray);
+    if (currentIsPlain) {
+        readPlainPixelsOld(image, file);
+    } else {
+        readNotPlainPixelsOld(image, file);
     }
+    file.close();
     return image;
 }
 
-BitmapImage NetpbmLoader::generatePPM(std::ifstream &file) const {
-    int width = 1;
-    int height = 1;
-    int maxValue = 255;
-    readMetaDataOld(width, height, maxValue, file);
-    BitmapImage image(width, height, RGB);
-    std::string pixelData;
-    for (int i = 1; i <= height; i++) {
-        for (int j = 1; j <= width; j++) {
-            for (int c = 1; c <= 3; c++) {
-                file >> pixelData;
-                int pixelValue = std::stoi(pixelData);
-                image.setPixel(i, j, c, 255 / maxValue * pixelValue);
-            }
-        }
+BitmapImage NetpbmLoader::generatePPM(std::ifstream &file) {
+    readMetaDataOld(file);
+    BitmapImage image(currentWidth, currentHeight, RGB);
+    if (currentIsPlain) {
+        readPlainPixelsOld(image, file);
+    } else {
+        readNotPlainPixelsOld(image, file);
     }
+    file.close();
     return image;
 }
 
-BitmapImage NetpbmLoader::generatePAM(std::ifstream &file) const {
+BitmapImage NetpbmLoader::generatePAM(std::ifstream &file) {
     //TODO Implement the code which read the .pam files.
     //They are not .pgm neither .ppm, but .pam are the only ones that implements the alpha channel.
+    file.close();
     return BitmapImage(0, 0, RGBAlpha);
 }
 
 //Old it's referred to the fact that now only the PAM format is used for every type of images.
-void NetpbmLoader::readMetaDataOld(int &width, int &height, int &maxValue, std::ifstream &file) const {
-    std::string data;
-    file >> data;
-    width = std::stoi(data);
-    file >> data;
-    height = std::stoi(data);
-    file >> data;
-    maxValue = std::stoi(data);
+void NetpbmLoader::readMetaDataOld(std::ifstream &file) {
+    file >> currentWidth;
+    file >> currentHeight;
+    file >> currentMaxValue;
+}
+
+void NetpbmLoader::readPlainPixelsOld(BitmapImage &image, std::ifstream &file) {
+    int pixelValue;
+    for (int row = 1; row <= currentHeight; row++) {
+        for (int column = 1; column <= currentWidth; column++) {
+            for (int channel = 1; channel <= currentChannels; channel++) {
+                file >> pixelValue;
+                image.setPixel(row, column, channel, 255 / currentMaxValue * pixelValue);
+            }
+        }
+    }
+}
+
+void
+NetpbmLoader::readNotPlainPixelsOld(BitmapImage &image, std::ifstream &file) {
+    file.ignore();
+    int pixelValue;
+    for (int row = 1; row <= currentHeight; row++) {
+        for (int column = 1; column <= currentWidth; column++) {
+            for (int channel = 1; channel <= currentChannels; channel++) {
+                pixelValue = file.get();
+                image.setPixel(row, column, channel, 255 / currentMaxValue * pixelValue);
+            }
+        }
+    }
 }

@@ -9,7 +9,7 @@
 
 class ImageLoader {
 public:
-    virtual BitmapImage loadImage(const std::string &url) const = 0;
+    virtual BitmapImage loadImage(const std::string &url) = 0;
 };
 
 #endif //LUCCHESI_CARLO_ELABORATO_LABORATORIO_IMAGELOADER_H

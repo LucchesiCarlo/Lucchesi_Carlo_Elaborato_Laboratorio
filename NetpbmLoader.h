@@ -12,17 +12,26 @@
 
 class NetpbmLoader : public ImageLoader {
 public:
-    BitmapImage loadImage(const std::string &url) const override;
+    BitmapImage loadImage(const std::string &url) override;
 
 private:
+    int currentWidth = 1;
+    int currentHeight = 1;
+    int currentMaxValue = 255;
+    int currentChannels = 1;
+    bool currentIsPlain = true;
 
-    BitmapImage generatePGM(std::ifstream &file) const;
+    BitmapImage generatePGM(std::ifstream &file);
 
-    BitmapImage generatePPM(std::ifstream &file) const;
+    BitmapImage generatePPM(std::ifstream &file);
 
-    BitmapImage generatePAM(std::ifstream &file) const;
+    BitmapImage generatePAM(std::ifstream &file);
 
-    void readMetaDataOld(int &width, int &height, int &maxValue, std::ifstream &file) const;
+    void readMetaDataOld(std::ifstream &file);
+
+    void readPlainPixelsOld(BitmapImage &image, std::ifstream &file);
+
+    void readNotPlainPixelsOld(BitmapImage &image, std::ifstream &file);
 };
 
 

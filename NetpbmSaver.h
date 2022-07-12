@@ -10,16 +10,32 @@
 
 class NetpbmSaver : public ImageSaver {
 public:
-    void saveImage(const BitmapImage &image, const std::string &url) const override;
+
+    void saveImage(const BitmapImage &image, const std::string &url) override;
+
+    void setPlain(bool plain) {
+        isPlain = plain;
+    }
+
+    void setPAM(bool PAM) {
+        isPAM = PAM;
+    }
 
 private:
-    void saveGrayImage(const BitmapImage &image, std::ofstream &file) const;
+    bool isPlain = true;
+    bool isPAM = false;
 
-    void saveRGBImage(const BitmapImage &image, std::ofstream &file) const;
+    void saveGrayImage(const BitmapImage &image, std::ofstream &file);
 
-    void savePAMImage(const BitmapImage &image, std::ofstream &file) const;
+    void saveRGBImage(const BitmapImage &image, std::ofstream &file);
 
-    void writeMetaDataOld(const BitmapImage &image, std::ofstream &file) const;
+    void savePAMImage(const BitmapImage &image, std::ofstream &file);
+
+    void writeMetaDataOld(const BitmapImage &image, std::ofstream &file);
+
+    void writePlainPixels(const BitmapImage &image, std::ofstream &file);
+
+    void writeNotPlainPixels(const BitmapImage &image, std::ofstream &file);
 };
 
 
