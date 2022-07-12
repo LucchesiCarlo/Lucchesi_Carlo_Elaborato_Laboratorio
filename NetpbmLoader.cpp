@@ -20,7 +20,7 @@ BitmapImage NetpbmLoader::loadImage(const std::string &url) const {
         } else {
             throw std::invalid_argument("Error: the file has an unknown format.");
         }
-        //TODO Read from the file and create the image
+        //TODO Read from the file and create the image.
     } else {
         throw std::invalid_argument("Error: it's impossible to open the file given as the url.");
     }
@@ -68,6 +68,7 @@ BitmapImage NetpbmLoader::generatePAM(std::ifstream &file) const {
     return BitmapImage(0, 0, RGBAlpha);
 }
 
+//Old it's referred to the fact that now only the PAM format is used for every type of images.
 void NetpbmLoader::readMetaDataOld(int &width, int &height, int &maxValue, std::ifstream &file) const {
     std::string data;
     file >> data;

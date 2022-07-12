@@ -9,7 +9,7 @@
 
 class ImageSaver {
 public:
-    virtual void saveImage(const BitmapImage &image) const = 0;
+    virtual void saveImage(const BitmapImage &image, const std::string &url) const = 0;
 };
 
 #endif //LUCCHESI_CARLO_ELABORATO_LABORATORIO_IMAGESAVER_H
