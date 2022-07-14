@@ -2,11 +2,11 @@
 // Created by carlo on 11/07/22.
 //
 #include "gtest/gtest.h"
-#include "../NetpbmLoader.h"
+#include "../NetpbmIO.h"
 
-class NetpbmLoaderSuite : public ::testing::Test {
+class NetpbmLoadingSuite : public ::testing::Test {
 protected:
-    NetpbmLoaderSuite() : expectedResultGray(3, 2, Gray), expectedResultRGB(3, 2, RGB) {
+    NetpbmLoadingSuite() : expectedResultGray(3, 2, Gray), expectedResultRGB(3, 2, RGB) {
         int value = 1;
         for (int i = 1; i <= 2; i++) {
             for (int j = 1; j <= 3; j++) {
@@ -34,14 +34,14 @@ protected:
     BitmapImage expectedResultRGB;
 };
 
-TEST_F(NetpbmLoaderSuite, TestPGMLoader) {
-    NetpbmLoader loader;
+TEST_F(NetpbmLoadingSuite, TestPGMLoader) {
+    NetpbmIO loader;
     BitmapImage image = loader.loadImage("./test.pgm");
     ASSERT_EQ(image, expectedResultGray) << "The PGM format loader doesn't work.";
 }
 
-TEST_F(NetpbmLoaderSuite, TestPPMLoader) {
-    NetpbmLoader loader;
+TEST_F(NetpbmLoadingSuite, TestPPMLoader) {
+    NetpbmIO loader;
     BitmapImage image = loader.loadImage("./test.ppm");
     ASSERT_EQ(image, expectedResultRGB) << "The PPM format loader doesn't work.";
 }

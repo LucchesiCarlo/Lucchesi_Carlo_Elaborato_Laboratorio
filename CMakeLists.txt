@@ -5,4 +5,4 @@ set(CMAKE_CXX_STANDARD 14)
 
 add_subdirectory(Unit_Test)
 
-add_executable(Lucchesi_Carlo_Elaborato_Laboratorio main.cpp BitmapImage.cpp BitmapImage.h KernelProcessing.cpp KernelProcessing.h ImageSaver.h ImageLoader.h NetpbmLoader.cpp NetpbmLoader.h NetpbmSaver.cpp NetpbmSaver.h)
+add_executable(Lucchesi_Carlo_Elaborato_Laboratorio main.cpp BitmapImage.cpp BitmapImage.h KernelProcessing.cpp KernelProcessing.h ImageIO.h NetpbmIO.cpp NetpbmIO.h)

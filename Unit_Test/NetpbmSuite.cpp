@@ -2,8 +2,7 @@
 // Created by carlo on 12/07/22.
 //
 #include "gtest/gtest.h"
-#include "../NetpbmLoader.h"
-#include "../NetpbmSaver.h"
+#include "../NetpbmIO.h"
 
 bool equalFiles(std::string lhs, std::string rhs);
 
@@ -13,8 +12,8 @@ protected:
         saver.setPlain(false);
     }
 
-    NetpbmSaver saver;
-    NetpbmLoader loader;
+    NetpbmIO saver;
+    NetpbmIO loader;
 };
 
 TEST_F(NetpbmSuite, TestLoadANDSavePGM) {
