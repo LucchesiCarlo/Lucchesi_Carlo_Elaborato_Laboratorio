@@ -11,7 +11,7 @@ protected:
     BitmapImageSuite() : image1{3, 2, Gray}, image2{3, 2, RGB}, image3{image2} {};
 
     void SetUp() override {
-        image1.setPixel(2, 3, 1, 10);
+        image1.setPixel(1, 2, 0, 10);
     }
 
     BitmapImage image1;
@@ -36,11 +36,11 @@ TEST_F(BitmapImageSuite, TestCopyConstructor) {
 
 TEST_F(BitmapImageSuite, TestAssignment) {
     image1 = image1;
-    ASSERT_NO_THROW(image1.getPixel(1, 1, 1)) << "The auto-assigment may destroy the image.";
+    ASSERT_NO_THROW(image1.getPixel(1, 1, 0)) << "The auto-assigment may destroy the image.";
     image1 = image2;
     ASSERT_EQ(image1, image2) << "The assigment operator doesn't work.";
-    image1.setPixel(1, 1, 1, 10);
-    image2.setPixel(1, 1, 1, 5);
-    ASSERT_NE(image1.getPixel(1, 1, 1), image2.getPixel(1, 1, 1)) << "The deep copy does'nt work properly.";
+    image1.setPixel(1, 1, 0, 10);
+    image2.setPixel(1, 1, 0, 5);
+    ASSERT_NE(image1.getPixel(1, 1, 0), image2.getPixel(1, 1, 0)) << "The deep copy doesn't work properly.";
     //Because BitmapImage doesn't override the != operator
 }

@@ -6,7 +6,7 @@
 
 BitmapImage::BitmapImage(int width, int height, ImageType type) : width(width), height(height), type(type) {
     if (width <= 0 || height <= 0) {
-        throw std::invalid_argument("Error: you can't define a image with negative dimensions");
+        throw std::invalid_argument("Error: you can't define a image with negative or zero dimensions");
     }
     switch (type) {
         case Gray:
@@ -43,11 +43,7 @@ void BitmapImage::setPixel(int row, int column, int channel, int value) {
     if (!itsValidPosition(row, column, channel)) {
         throw std::invalid_argument("Error: the given position to pick a pixel is wrong.");
     }
-    row--;
-    column--;
-    channel--;
-    //Decrementing row, column and channel is necessary due to the (1,1) pixel of the channel 1 is the top left pixel
-    // of the first channel
+
     if (value < 0) {
         value = 0;
     } else if (value > 255) {
@@ -67,7 +63,7 @@ void BitmapImage::copyImage(const BitmapImage &image) {
 }
 
 bool BitmapImage::itsValidPosition(int row, int column, int channel) const {
-    if (row <= 0 || row > height || column <= 0 || column > width || channel <= 0 || channel > channels) {
+    if (row < 0 || row >= height || column < 0 || column >= width || channel < 0 || channel >= channels) {
         return false;
     }
     return true;

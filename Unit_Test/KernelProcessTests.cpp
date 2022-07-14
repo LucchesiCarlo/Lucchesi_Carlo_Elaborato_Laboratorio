@@ -15,11 +15,11 @@ TEST(KernelProcessingTests, TestContructor) {
     KernelProcessing three(Three);
     KernelProcessing five(Five);
 
-    ASSERT_EQ(three.getMaskElement(2, 2), 1) << "3x3 Kernel constructor failed (check middle element).";
-    ASSERT_EQ(three.getMaskElement(3, 3), 0) << "3x3 Kernel constructor failed";
+    ASSERT_EQ(three.getMaskElement(1, 1), 1) << "3x3 Kernel constructor failed (check middle element).";
+    ASSERT_EQ(three.getMaskElement(2, 2), 0) << "3x3 Kernel constructor failed";
 
-    ASSERT_EQ(five.getMaskElement(3, 3), 1) << "5x5 Kernel constructor failed (check middle element).";
-    ASSERT_EQ(five.getMaskElement(2, 2), 0) << "5x5 Kernel constructor failed";
+    ASSERT_EQ(five.getMaskElement(2, 2), 1) << "5x5 Kernel constructor failed (check middle element).";
+    ASSERT_EQ(five.getMaskElement(2, 1), 0) << "5x5 Kernel constructor failed";
 }
 
 TEST(KernelProcessingTests, TestWrongData) {
@@ -31,8 +31,8 @@ TEST(KernelProcessingTests, TestWrongData) {
     EXPECT_THROW(three.getMaskElement(4, 1), std::invalid_argument);
     EXPECT_THROW(three.getMaskElement(1, 4), std::invalid_argument);
 
-    EXPECT_NO_THROW(three.getMaskElement(1, 3));
-    EXPECT_NO_THROW(three.setMaskElement(3, 2, 10));
+    EXPECT_NO_THROW(three.getMaskElement(1, 2));
+    EXPECT_NO_THROW(three.setMaskElement(2, 1, 10));
 
 
     EXPECT_THROW(five.getMaskElement(-1, 1), std::invalid_argument);
@@ -40,13 +40,19 @@ TEST(KernelProcessingTests, TestWrongData) {
     EXPECT_THROW(five.getMaskElement(6, 1), std::invalid_argument);
     EXPECT_THROW(five.getMaskElement(1, 6), std::invalid_argument);
 
-    EXPECT_NO_THROW(five.getMaskElement(1, 3));
+    EXPECT_NO_THROW(five.getMaskElement(1, 4));
     EXPECT_NO_THROW(five.setMaskElement(3, 2, 10));
 }
 
 TEST(KernelProcessingTests, TestIdentityMask) {
     KernelProcessing identity(Three);
-    BitmapImage image(3, 2, RGB);
+    BitmapImage image(2, 3, RGB);
+
+    image.setPixel(0, 0, 1, 4);
+    image.setPixel(0, 1, 1, 6);
+
+    image.setPixel(1, 0, 2, 4);
+    image.setPixel(0, 0, 2, 33);
 
     BitmapImage result = identity.processImage(image);
     ASSERT_EQ(result, image) << "Identity Kernel Processing doesn't perform correctly.";

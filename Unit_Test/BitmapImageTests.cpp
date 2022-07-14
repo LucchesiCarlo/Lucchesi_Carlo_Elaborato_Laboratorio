@@ -6,8 +6,26 @@
 
 TEST(BitmapImageTests, TestSetGet) {
     BitmapImage image(3, 2, Gray);
-    image.setPixel(1, 2, 1, 10);
-    ASSERT_EQ(image.getPixel(1, 2, 1), 10) << "Or the setPixel or the getPixel doesn't work. ";
+    image.setPixel(1, 2, 0, 10);
+    ASSERT_EQ(image.getPixel(1, 2, 0), 10) << "Or the setPixel or the getPixel doesn't work. ";
+}
+
+TEST(BitmapImageTests, TestGoodData) {
+    BitmapImage image(3, 2, GrayAlpha);
+    ASSERT_NO_THROW(image.getPixel(1, 2, 1));
+    ASSERT_NO_THROW(image.getPixel(1, 0, 0));
+
+    ASSERT_NO_THROW(image.setPixel(0, 2, 1, 33));
+    ASSERT_NO_THROW(image.setPixel(0, 0, 0, 0));
+}
+
+TEST(BitmapImageTests, TestLimitData) {
+    BitmapImage image(3, 2, RGB);
+    image.setPixel(0, 0, 0, 999);
+    ASSERT_EQ(image.getPixel(0, 0, 0), 255);
+
+    image.setPixel(1, 0, 2, -999);
+    ASSERT_EQ(image.getPixel(1, 0, 2), 0);
 }
 
 TEST(BitmapImageTests, TestWrongData) {

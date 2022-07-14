@@ -49,10 +49,10 @@ BitmapImage KernelProcessing::processImage(const BitmapImage &image) const {
     BitmapImage result(width, height, type);
     int channels = result.getChannels();
 
-    for (int c = 1; c <= channels; c++) {
-        for (int i = 1; i <= height; i++) {
-            for (int j = 1; j <= width; j++) {
-                result.setPixel(i, j, c, calculateValue(image, i, j, c));
+    for (int channel = 0; channel < channels; channel++) {
+        for (int row = 0; row < height; row++) {
+            for (int column = 0; column < width; column++) {
+                result.setPixel(row, column, channel, calculateValue(image, row, column, channel));
             }
         }
     }
@@ -64,9 +64,6 @@ void KernelProcessing::setMaskElement(int row, int column, float value) {
         throw std::invalid_argument("Error: given position is not valid.");
     }
 
-    //The intent is to consider in the external interface that the top left element is in the row and column 1.
-    row--;
-    column--;
     mask[row * dimension + column] = value;
 }
 
@@ -75,9 +72,6 @@ int KernelProcessing::getMaskElement(int row, int column) const {
         throw std::invalid_argument("Error: given position is not valid.");
     }
 
-    //The intent is to consider in the external interface that the top left element is in the row and column 1.
-    row--;
-    column--;
     return mask[row * dimension + column];
 }
 
@@ -100,9 +94,8 @@ int KernelProcessing::calculateValue(const BitmapImage &image, int row, int colu
             //in the image.
             int imageRow = i;
             int imageColumn = j;
-            int maskRow = row + offset * 2 - i - 1;
-            int maskColumn = column + offset * 2 - j - 1;
-            //he minus 1 are essential due to the fact that externally the first element is at index (1,1)
+            int maskRow = row + offset - i;
+            int maskColumn = column + offset - j;
 
             //I suppose to use the Extend Hedge technique to handle external pixels
             //Reference: https://en.wikipedia.org/wiki/Kernel_(image_processing)#Edge_Handling
@@ -118,21 +111,21 @@ int KernelProcessing::calculateValue(const BitmapImage &image, int row, int colu
 
 
 void KernelProcessing::extendHedge(const BitmapImage &image, int &row, int &column) const {
-    if (row < 1) {
-        row = 1;
-    } else if (row > image.getHeight()) {
-        row = image.getHeight();
+    if (row < 0) {
+        row = 0;
+    } else if (row >= image.getHeight()) {
+        row = image.getHeight() - 1;
     }
-    if (column < 1) {
-        column = 1;
-    } else if (column > image.getWidth()) {
-        column = image.getWidth();
+    if (column < 0) {
+        column = 0;
+    } else if (column >= image.getWidth()) {
+        column = image.getWidth() - 1;
     }
 }
 
 
 bool KernelProcessing::itsValidPosition(int row, int column) const {
-    if (row < 1 || row > dimension || column < 1 || column > dimension) {
+    if (row < 0 || row >= dimension || column < 0 || column >= dimension) {
         return false;
     }
     return true;

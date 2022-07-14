@@ -67,7 +67,7 @@ BitmapImage NetpbmIO::generatePAM(std::ifstream &file) {
     //TODO Implement the code which read the .pam files.
     //They are not .pgm neither .ppm, but .pam are the only ones that implements the alpha channel.
     file.close();
-    return BitmapImage(0, 0, RGBAlpha);
+    return BitmapImage(1, 1, RGBAlpha);
 }
 
 //Old it's referred to the fact that now only the PAM format is used for every type of images.
@@ -79,9 +79,9 @@ void NetpbmIO::readMetaDataOld(std::ifstream &file) {
 
 void NetpbmIO::readPlainPixelsOld(BitmapImage &image, std::ifstream &file) {
     int pixelValue;
-    for (int row = 1; row <= currentHeight; row++) {
-        for (int column = 1; column <= currentWidth; column++) {
-            for (int channel = 1; channel <= currentChannels; channel++) {
+    for (int row = 0; row < currentHeight; row++) {
+        for (int column = 0; column < currentWidth; column++) {
+            for (int channel = 0; channel < currentChannels; channel++) {
                 file >> pixelValue;
                 image.setPixel(row, column, channel, 255 / currentMaxValue * pixelValue);
             }
@@ -93,9 +93,9 @@ void
 NetpbmIO::readNotPlainPixelsOld(BitmapImage &image, std::ifstream &file) {
     file.ignore();
     int pixelValue;
-    for (int row = 1; row <= currentHeight; row++) {
-        for (int column = 1; column <= currentWidth; column++) {
-            for (int channel = 1; channel <= currentChannels; channel++) {
+    for (int row = 0; row < currentHeight; row++) {
+        for (int column = 0; column < currentWidth; column++) {
+            for (int channel = 0; channel < currentChannels; channel++) {
                 pixelValue = file.get();
                 image.setPixel(row, column, channel, 255 / currentMaxValue * pixelValue);
             }
@@ -195,10 +195,10 @@ void NetpbmIO::writePlainPixels(const BitmapImage &image, std::ofstream &file) {
     int height = image.getHeight();
     int channels = image.getChannels();
 
-    for (int row = 1; row <= height; row++) {
-        for (int column = 1; column <= width; column++) {
-            for (int c = 1; c <= channels; c++) {
-                file << image.getPixel(row, column, c) << " ";
+    for (int row = 0; row < height; row++) {
+        for (int column = 0; column < width; column++) {
+            for (int channel = 0; channel < channels; channel++) {
+                file << image.getPixel(row, column, channel) << " ";
             }
             file << std::endl;
         }
@@ -210,10 +210,10 @@ void NetpbmIO::writeNotPlainPixels(const BitmapImage &image, std::ofstream &file
     int height = image.getHeight();
     int channels = image.getChannels();
 
-    for (int row = 1; row <= height; row++) {
-        for (int column = 1; column <= width; column++) {
-            for (int c = 1; c <= channels; c++) {
-                file.put(static_cast<uint8_t> (image.getPixel(row, column, c)));
+    for (int row = 0; row < height; row++) {
+        for (int column = 0; column < width; column++) {
+            for (int channel = 0; channel < channels; channel++) {
+                file.put(static_cast<uint8_t> (image.getPixel(row, column, channel)));
             }
         }
     }

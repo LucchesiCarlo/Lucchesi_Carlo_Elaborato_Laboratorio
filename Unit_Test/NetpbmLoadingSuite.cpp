@@ -8,26 +8,26 @@ class NetpbmLoadingSuite : public ::testing::Test {
 protected:
     NetpbmLoadingSuite() : expectedResultGray(3, 2, Gray), expectedResultRGB(3, 2, RGB) {
         int value = 1;
-        for (int i = 1; i <= 2; i++) {
-            for (int j = 1; j <= 3; j++) {
-                expectedResultGray.setPixel(i, j, 1, value++);
+        for (int i = 0; i < 2; i++) {
+            for (int j = 0; j < 3; j++) {
+                expectedResultGray.setPixel(i, j, 0, value++);
             }
         }
 
         //Setting up the RGB image
         //Setting up the Red Channel
-        expectedResultRGB.setPixel(1, 1, 1, 255);
-        expectedResultRGB.setPixel(2, 1, 1, 255);
-        expectedResultRGB.setPixel(2, 2, 1, 255);
+        expectedResultRGB.setPixel(0, 0, 0, 255);
+        expectedResultRGB.setPixel(1, 0, 0, 255);
+        expectedResultRGB.setPixel(1, 1, 0, 255);
 
         //Setting up the Green Channel
-        expectedResultRGB.setPixel(1, 2, 2, 255);
-        expectedResultRGB.setPixel(2, 1, 2, 255);
-        expectedResultRGB.setPixel(2, 2, 2, 255);
+        expectedResultRGB.setPixel(0, 1, 1, 255);
+        expectedResultRGB.setPixel(1, 0, 1, 255);
+        expectedResultRGB.setPixel(1, 1, 1, 255);
 
         //Setting up the Blu Channel
-        expectedResultRGB.setPixel(1, 3, 3, 255);
-        expectedResultRGB.setPixel(2, 2, 3, 255);
+        expectedResultRGB.setPixel(0, 2, 2, 255);
+        expectedResultRGB.setPixel(1, 1, 2, 255);
     }
 
     BitmapImage expectedResultGray;

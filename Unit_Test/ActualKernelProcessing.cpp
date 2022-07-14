@@ -6,13 +6,18 @@
 
 class ActualKernelProcessing : public ::testing::Test {
 protected:
-    ActualKernelProcessing() : kernel{Three}, image(3, 2, Gray), expectedResult{image} {
-        kernel.setMaskElement(1, 1, 1);
-        kernel.setMaskElement(3, 3, 1);
-        for (int i = 0; i < 6; i++) {
-            image.setPixel(i / 3 + 1, i % 3 + 1, 1, 2);
-            expectedResult.setPixel(i / 3 + 1, i % 3 + 1, 1, 6);
+    ActualKernelProcessing() : kernel{Three}, image(4, 3, GrayAlpha), expectedResult{image} {
+        kernel.setMaskElement(0, 0, 1);
+        kernel.setMaskElement(2, 2, 1);
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 4; j++) {
+                image.setPixel(i, j, 0, 2);
+                expectedResult.setPixel(i, j, 0, 6);
+            }
         }
+        image.setPixel(0, 0, 1, 33);
+        expectedResult.setPixel(0, 0, 1, 66);
+        expectedResult.setPixel(1, 1, 1, 33);
     }
 
     KernelProcessing kernel;

@@ -8,27 +8,27 @@ class NetpbmSavingSuite : public ::testing::Test {
 protected:
 
     NetpbmSavingSuite() : imageGray(3, 2, Gray), imageRGB(3, 2, RGB) {
-        for (int row = 1; row <= 2; row++) {
-            for (int column = 1; column <= 3; column++) {
-                imageGray.setPixel(row, column, 1, 3);
+        for (int row = 0; row < 2; row++) {
+            for (int column = 0; column < 3; column++) {
+                imageGray.setPixel(row, column, 0, 3);
             }
         }
 
         //Setting up the RGB image
         //Setting up the Red Channel
-        imageRGB.setPixel(1, 1, 1, 255);
-        imageRGB.setPixel(2, 1, 1, 122);
-        imageRGB.setPixel(2, 2, 1, 33);
+        imageRGB.setPixel(0, 0, 0, 255);
+        imageRGB.setPixel(1, 0, 0, 122);
+        imageRGB.setPixel(1, 1, 0, 33);
 
         //Setting up the Green Channel
-        imageRGB.setPixel(1, 2, 2, 199);
-        imageRGB.setPixel(2, 1, 2, 22);
-        imageRGB.setPixel(2, 2, 2, 77);
+        imageRGB.setPixel(0, 1, 1, 199);
+        imageRGB.setPixel(1, 0, 1, 22);
+        imageRGB.setPixel(1, 1, 1, 77);
 
         //Setting up the Blu Channel
-        imageRGB.setPixel(1, 3, 3, 47);
-        imageRGB.setPixel(2, 2, 3, 22);
-        imageRGB.setPixel(2, 3, 3, 255);
+        imageRGB.setPixel(0, 2, 2, 47);
+        imageRGB.setPixel(1, 1, 2, 22);
+        imageRGB.setPixel(1, 2, 2, 255);
     }
 
     BitmapImage imageGray;
