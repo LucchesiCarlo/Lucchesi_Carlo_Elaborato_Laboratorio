@@ -20,28 +20,27 @@ protected:
 };
 
 TEST_F(BitmapImageSuite, TestEqualOperator) {
-    bool isEqual = image2 == image3;
-    ASSERT_EQ(isEqual, true);
-    isEqual = image1 == image2;
-    EXPECT_EQ(isEqual, false);
+    ASSERT_TRUE(image2 == image3) << "image2 and image3 should be equal.";
+    ASSERT_FALSE(image1 == image2) << "image1 and image3 should be different.";
 }
 
 TEST_F(BitmapImageSuite, TestCopyConstructor) {
-    ASSERT_EQ(image2, image3);
+    ASSERT_EQ(image2, image3) << "The copy constructor doesn't work.";
     image2.setPixel(1, 1, 1, 10);
     image3.setPixel(1, 1, 1, 5);
     //To ensure that the images should be different
-    EXPECT_NE(image2.getPixel(1, 1, 1), image3.getPixel(1, 1, 1));
+    ASSERT_NE(image2.getPixel(1, 1, 1), image3.getPixel(1, 1, 1))
+                                << "The images remain equals after different setPixels.";
     //Because BitmapImage doesn't override the != operator
 }
 
 TEST_F(BitmapImageSuite, TestAssignment) {
     image1 = image1;
-    ASSERT_NO_THROW(image1.getPixel(1, 1, 1));
+    ASSERT_NO_THROW(image1.getPixel(1, 1, 1)) << "The auto-assigment may destroy the image.";
     image1 = image2;
-    ASSERT_EQ(image1, image2);
+    ASSERT_EQ(image1, image2) << "The assigment operator doesn't work.";
     image1.setPixel(1, 1, 1, 10);
     image2.setPixel(1, 1, 1, 5);
-    EXPECT_NE(image1.getPixel(1, 1, 1), image2.getPixel(1, 1, 1));
+    ASSERT_NE(image1.getPixel(1, 1, 1), image2.getPixel(1, 1, 1)) << "The deep copy does'nt work properly.";
     //Because BitmapImage doesn't override the != operator
 }

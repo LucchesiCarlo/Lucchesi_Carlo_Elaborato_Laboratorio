@@ -16,12 +16,9 @@ protected:
 
 
 TEST_F(KernelProcessingSuite, TestEqualOperator) {
-    bool isEqual = kernel1 == kernel2;
-    ASSERT_EQ(isEqual, true) << "kernel1 and kernel2 are different.";
-    isEqual = kernel1 == kernel3;
-    ASSERT_EQ(isEqual, false) << "kernel1 and kernel3 are equal.";
-    isEqual = kernel1 == kernel1;
-    ASSERT_EQ(isEqual, true) << "Auto comparison failed.";
+    ASSERT_TRUE(kernel1 == kernel2) << "kernel1 and kernel2 are different.";
+    ASSERT_FALSE(kernel1 == kernel3) << "kernel1 and kernel3 are equal.";
+    ASSERT_TRUE(kernel1 == kernel1) << "Auto comparison failed.";
 }
 
 TEST_F(KernelProcessingSuite, TestCopyConstructor) {

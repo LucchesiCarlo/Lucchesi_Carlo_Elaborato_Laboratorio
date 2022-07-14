@@ -7,7 +7,7 @@
 TEST(BitmapImageTests, TestSetGet) {
     BitmapImage image(3, 2, Gray);
     image.setPixel(1, 2, 1, 10);
-    EXPECT_EQ(image.getPixel(1, 2, 1), 10);
+    ASSERT_EQ(image.getPixel(1, 2, 1), 10) << "Or the setPixel or the getPixel doesn't work. ";
 }
 
 TEST(BitmapImageTests, TestWrongData) {
