@@ -67,7 +67,7 @@ void KernelProcessing::setMaskElement(int row, int column, float value) {
     mask[row * dimension + column] = value;
 }
 
-int KernelProcessing::getMaskElement(int row, int column) const {
+float KernelProcessing::getMaskElement(int row, int column) const {
     if (!itsValidPosition(row, column)) {
         throw std::invalid_argument("Error: given position is not valid.");
     }

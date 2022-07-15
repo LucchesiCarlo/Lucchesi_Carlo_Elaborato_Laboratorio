@@ -6,20 +6,20 @@
 
 TEST(KernelProcessingTests, TestGetSet) {
     KernelProcessing kernel(Three);
-    kernel.setMaskElement(1, 1, 10);
+    kernel.setMaskElement(1, 1, 10.55);
 
-    ASSERT_EQ(kernel.getMaskElement(1, 1), 10);
+    ASSERT_FLOAT_EQ(kernel.getMaskElement(1, 1), 10.55);
 }
 
 TEST(KernelProcessingTests, TestContructor) {
     KernelProcessing three(Three);
     KernelProcessing five(Five);
 
-    ASSERT_EQ(three.getMaskElement(1, 1), 1) << "3x3 Kernel constructor failed (check middle element).";
-    ASSERT_EQ(three.getMaskElement(2, 2), 0) << "3x3 Kernel constructor failed";
+    ASSERT_FLOAT_EQ(three.getMaskElement(1, 1), 1) << "3x3 Kernel constructor failed (check middle element).";
+    ASSERT_FLOAT_EQ(three.getMaskElement(2, 2), 0) << "3x3 Kernel constructor failed";
 
-    ASSERT_EQ(five.getMaskElement(2, 2), 1) << "5x5 Kernel constructor failed (check middle element).";
-    ASSERT_EQ(five.getMaskElement(2, 1), 0) << "5x5 Kernel constructor failed";
+    ASSERT_FLOAT_EQ(five.getMaskElement(2, 2), 1) << "5x5 Kernel constructor failed (check middle element).";
+    ASSERT_FLOAT_EQ(five.getMaskElement(2, 1), 0) << "5x5 Kernel constructor failed";
 }
 
 TEST(KernelProcessingTests, TestWrongData) {

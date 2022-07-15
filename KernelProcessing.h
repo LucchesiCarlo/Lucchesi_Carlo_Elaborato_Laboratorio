@@ -27,7 +27,11 @@ public:
 
     void setMaskElement(int row, int column, float value);
 
-    int getMaskElement(int row, int column) const;
+    float getMaskElement(int row, int column) const;
+
+    int getDimension() const {
+        return dimension;
+    }
 
     ~KernelProcessing() {
         delete[] mask;
