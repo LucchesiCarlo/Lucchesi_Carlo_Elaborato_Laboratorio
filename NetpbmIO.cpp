@@ -14,8 +14,8 @@ BitmapImage NetpbmIO::loadImage(const std::string &url) {
         readType.close();
 
         std::ifstream imageFile;
-        //The Morgan's Law : not a or not b = not (a and b)
-        if (!(magicNumber.compare("P5") && magicNumber.compare("P6"))) {
+
+        if (!magicNumber.compare("P5") || !magicNumber.compare("P6") || !magicNumber.compare("P7")) {
             currentIsPlain = false;
             imageFile = std::ifstream(url, std::ifstream::binary);
         } else {
@@ -45,7 +45,7 @@ BitmapImage NetpbmIO::generatePGM(std::ifstream &file) {
     if (currentIsPlain) {
         readPlainPixelsOld(image, file);
     } else {
-        readNotPlainPixelsOld(image, file);
+        readNotPlainPixels(image, file);
     }
     file.close();
     return image;
@@ -57,7 +57,7 @@ BitmapImage NetpbmIO::generatePPM(std::ifstream &file) {
     if (currentIsPlain) {
         readPlainPixelsOld(image, file);
     } else {
-        readNotPlainPixelsOld(image, file);
+        readNotPlainPixels(image, file);
     }
     file.close();
     return image;
@@ -66,8 +66,49 @@ BitmapImage NetpbmIO::generatePPM(std::ifstream &file) {
 BitmapImage NetpbmIO::generatePAM(std::ifstream &file) {
     //TODO Implement the code which read the .pam files.
     //They are not .pgm neither .ppm, but .pam are the only ones that implements the alpha channel.
+    ImageType imageType;
+    for (int i = 0; i < 6; i++) {
+        std::string attribute;
+        file >> attribute;
+        if (!attribute.compare("WIDTH")) {
+            file >> currentWidth;
+        } else if (!attribute.compare("HEIGHT")) {
+            file >> currentHeight;
+        } else if (!attribute.compare("DEPTH")) {
+            file >> currentChannels;
+        } else if (!attribute.compare("MAXVAL")) {
+            file >> currentMaxValue;
+        } else if (!attribute.compare("TUPLTYPE")) {
+            std::string type;
+            file >> type;
+            if (!type.compare("GRAYSCALE")) {
+                imageType = Gray;
+            } else if (!type.compare("GRAYSCALE_ALPHA")) {
+                imageType = GrayAlpha;
+            } else if (!type.compare("RGB")) {
+                imageType = RGB;
+            } else if (!type.compare("RGB_ALPHA")) {
+                imageType = RGBAlpha;
+            } else {
+                throw std::invalid_argument("Error: this image has a bad heading.");
+            }
+        } else if (!attribute.compare("ENDHDR")) {
+            break;
+        }
+    }
+    if ((imageType == Gray && currentChannels != 1) || (imageType == GrayAlpha && currentChannels != 2) ||
+        (imageType == RGB && currentChannels != 3) || (imageType == RGBAlpha && currentChannels != 4)) {
+        throw std::invalid_argument("Error: the given file has the wrong attributes.");
+    }
+
+    BitmapImage image(currentWidth, currentHeight, imageType);
+    if (imageType == Gray || imageType == RGB) {
+        readNotPlainPixels(image, file);
+    } else {
+        readNotPlainPixels(image, file);
+    }
     file.close();
-    return BitmapImage(1, 1, RGBAlpha);
+    return image;
 }
 
 //Old it's referred to the fact that now only the PAM format is used for every type of images.
@@ -89,10 +130,9 @@ void NetpbmIO::readPlainPixelsOld(BitmapImage &image, std::ifstream &file) {
     }
 }
 
-void
-NetpbmIO::readNotPlainPixelsOld(BitmapImage &image, std::ifstream &file) {
+void NetpbmIO::readNotPlainPixels(BitmapImage &image, std::ifstream &file) {
     file.ignore();
-    int pixelValue;
+    int pixelValue = 0;
     for (int row = 0; row < currentHeight; row++) {
         for (int column = 0; column < currentWidth; column++) {
             for (int channel = 0; channel < currentChannels; channel++) {
@@ -111,17 +151,21 @@ void NetpbmIO::saveImage(const BitmapImage &image, const std::string &url) {
         file = std::ofstream(url, std::ofstream::trunc | std::ofstream::binary);
     }
     if (file.good()) {
-        switch (image.getType()) {
-            case Gray:
-                saveGrayImage(image, file);
-                break;
-            case RGB:
-                saveRGBImage(image, file);
-                break;
-            case GrayAlpha:
-            case RGBAlpha:
-                savePAMImage(image, file);
-                break;
+        if (isPAM) {
+            savePAMImage(image, file);
+        } else {
+            switch (image.getType()) {
+                case Gray:
+                    saveGrayImage(image, file);
+                    break;
+                case RGB:
+                    saveRGBImage(image, file);
+                    break;
+                case GrayAlpha:
+                case RGBAlpha:
+                    savePAMImage(image, file);
+                    break;
+            }
         }
         file.close();
     } else {
@@ -133,7 +177,7 @@ void NetpbmIO::saveGrayImage(const BitmapImage &image, std::ofstream &file) {
     if (isPlain) {
         file << "P2" << std::endl;
         writeMetaDataOld(image, file);
-        writePlainPixels(image, file);
+        writePlainPixelsOld(image, file);
     } else {
         file << "P5" << std::endl;
         writeMetaDataOld(image, file);
@@ -145,7 +189,7 @@ void NetpbmIO::saveRGBImage(const BitmapImage &image, std::ofstream &file) {
     if (isPlain) {
         file << "P3" << std::endl;
         writeMetaDataOld(image, file);
-        writePlainPixels(image, file);
+        writePlainPixelsOld(image, file);
     } else {
         file << "P6" << std::endl;
         writeMetaDataOld(image, file);
@@ -169,20 +213,18 @@ void NetpbmIO::savePAMImage(const BitmapImage &image, std::ofstream &file) {
             file << "GRAYSCALE";
             break;
         case GrayAlpha:
-            file << "GRAYSCALE_APLHA";
+            file << "GRAYSCALE_ALPHA";
             break;
         case RGB:
             file << "RGB";
             break;
         case RGBAlpha:
-            file << "RGB_APLHA";
+            file << "RGB_ALPHA";
             break;
     }
-    file << std::endl;
+    file << std::endl << "ENDHDR" << std::endl;
 
     writeNotPlainPixels(image, file);
-
-    file << "ENDHDR" << std::endl;
 }
 
 //It's called Old because now the .pam format can be used for every type of image
@@ -190,11 +232,10 @@ void NetpbmIO::writeMetaDataOld(const BitmapImage &image, std::ofstream &file) {
     file << image.getWidth() << " " << image.getHeight() << std::endl << 255 << std::endl;
 }
 
-void NetpbmIO::writePlainPixels(const BitmapImage &image, std::ofstream &file) {
+void NetpbmIO::writePlainPixelsOld(const BitmapImage &image, std::ofstream &file) {
     int width = image.getWidth();
     int height = image.getHeight();
     int channels = image.getChannels();
-
     for (int row = 0; row < height; row++) {
         for (int column = 0; column < width; column++) {
             for (int channel = 0; channel < channels; channel++) {
@@ -209,11 +250,10 @@ void NetpbmIO::writeNotPlainPixels(const BitmapImage &image, std::ofstream &file
     int width = image.getWidth();
     int height = image.getHeight();
     int channels = image.getChannels();
-
     for (int row = 0; row < height; row++) {
         for (int column = 0; column < width; column++) {
             for (int channel = 0; channel < channels; channel++) {
-                file.put(static_cast<uint8_t> (image.getPixel(row, column, channel)));
+                file.put((image.getPixel(row, column, channel)));
             }
         }
     }

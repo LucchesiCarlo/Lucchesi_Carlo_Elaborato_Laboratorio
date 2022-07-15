@@ -31,6 +31,7 @@ private:
 
     //Used by the saving method to specify how to save the image.
     bool isPlain = true;
+    //To force the using of the .pam standard, even with grayscale o RGB images.
     bool isPAM = false;
 
     //Methods to load the images.
@@ -44,7 +45,7 @@ private:
 
     void readPlainPixelsOld(BitmapImage &image, std::ifstream &file);
 
-    void readNotPlainPixelsOld(BitmapImage &image, std::ifstream &file);
+    void readNotPlainPixels(BitmapImage &image, std::ifstream &file);
 
     //Methods to save the images.
     void saveGrayImage(const BitmapImage &image, std::ofstream &file);
@@ -55,7 +56,7 @@ private:
 
     void writeMetaDataOld(const BitmapImage &image, std::ofstream &file);
 
-    void writePlainPixels(const BitmapImage &image, std::ofstream &file);
+    void writePlainPixelsOld(const BitmapImage &image, std::ofstream &file);
 
     void writeNotPlainPixels(const BitmapImage &image, std::ofstream &file);
 };
